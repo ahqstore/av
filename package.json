@@ -1,5 +1,6 @@
 {
-	"dependencies": {
-		"clamscan": "^2.4.0"
-	}
+  "type": "commonjs",
+  "dependencies": {
+    "clamscan": "^2.4.0"
+  }
 }
