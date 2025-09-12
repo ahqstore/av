@@ -34,7 +34,7 @@ async function uploadFile() {
     // Make the fetch request
     const response = await fetch(url, {
       method: "POST",
-      body: form,
+      body: form.getBuffer(),
       headers: {
         ...formHeaders,
         Authorization: authorizationToken,
