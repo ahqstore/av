@@ -1,9 +1,8 @@
-import { createReadStream, readFileSync } from "node:fs";
+import { createReadStream, readFileSync, existsSync } from "node:fs";
 import FormData from "form-data";
 
 // Define the file path and API details
 const filePath = "./samples/diva-beta.apk";
-
 const url = "http://localhost:8000/api/v1/upload";
 
 const authorizationToken = readFileSync("./token").toString().trim();
@@ -12,12 +11,25 @@ console.log(`Using token: \`${authorizationToken}\``);
 
 async function uploadFile() {
   try {
+    // Check if the file exists before trying to create a read stream
+    if (!existsSync(filePath)) {
+      console.error(`Error: File not found at path: ${filePath}`);
+      return;
+    }
+
     // Create a new FormData instance
     const form = new FormData();
 
-    form.append("file", createReadStream(filePath));
+    // Append the file stream to the form data.
+    // The key 'file' must match the API's expected field name exactly.
+    form.append("file", createReadStream(filePath), {
+      filename: "sample.apk",
+    });
 
+    // Get the headers from the form-data object, which includes the Content-Type
     const formHeaders = form.getHeaders();
+
+    console.log(formHeaders);
 
     // Make the fetch request
     const response = await fetch(url, {
@@ -25,8 +37,7 @@ async function uploadFile() {
       body: form,
       headers: {
         ...formHeaders,
-        "Authorization": authorizationToken,
-        "X-Mobsf-Api-Key": authorizationToken,
+        Authorization: authorizationToken,
       },
     });
 
