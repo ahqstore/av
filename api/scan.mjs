@@ -15,13 +15,17 @@ async function uploadFile() {
 
     form.append("file", createReadStream(filePath));
 
+    const formHeaders = form.getHeaders({
+      Authorization: authorizationToken,
+    });
+
     // Make the fetch request
     const response = await fetch(url, {
       method: "POST",
       body: form,
       headers: {
-        "Authorization": authorizationToken,
-        "Content-Type": "multipart/form-data",
+        ...formHeaders,
+        Authorization: authorizationToken,
       },
     });
 
