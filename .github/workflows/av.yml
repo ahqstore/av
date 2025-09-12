@@ -5,10 +5,25 @@ on:
   issue_comment:
 
 jobs:
+  mobsf:
+    name: Run MobSF (Android)
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup mobsfscan
+        run: pip install mobsfscan
+
+      - name: Scan apk
+        run: mobsfscan ./samples/app.apk -c .mobsf
+
   clamav:
     name: Run ClamAV (Linux mainly)
 
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
