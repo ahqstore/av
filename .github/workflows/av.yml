@@ -19,8 +19,8 @@ jobs:
         run: |
           sudo apt install clamav clamav-daemon
 
-          clamd & freshclam
-          clamdscan /data/samples/
+          sudo clamd & sudo freshclam
+          sudo clamdscan /data/samples/
         continue-on-error: true
 
       - name: Check scan results
