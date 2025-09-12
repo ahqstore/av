@@ -6,7 +6,9 @@ const filePath = "./samples/diva-beta.apk";
 
 const url = "http://localhost:8000/api/v1/upload";
 
-const authorizationToken = readFileSync("./token").toString();
+const authorizationToken = readFileSync("./token").toString().trim();
+
+console.log(`Using token: \`${authorizationToken}\``);
 
 async function uploadFile() {
   try {
