@@ -15,9 +15,7 @@ async function uploadFile() {
 
     form.append("file", createReadStream(filePath));
 
-    const formHeaders = form.getHeaders({
-      Authorization: authorizationToken,
-    });
+    const formHeaders = form.getHeaders();
 
     // Make the fetch request
     const response = await fetch(url, {
@@ -25,7 +23,8 @@ async function uploadFile() {
       body: form,
       headers: {
         ...formHeaders,
-        Authorization: authorizationToken,
+        "Authorization": authorizationToken,
+        "X-Mobsf-Api-Key": authorizationToken,
       },
     });
 
