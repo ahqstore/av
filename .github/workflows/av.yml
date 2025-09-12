@@ -16,6 +16,7 @@ jobs:
 
       - name: Install Deps
         run: |
+          suto apt-get update
           sudo apt-get install git golang-go jadx dex2jar
 
           git clone https://github.com/Cyber-Buddy/APKHunt.git
