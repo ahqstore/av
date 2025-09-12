@@ -26,16 +26,16 @@ jobs:
           docker pull opensecurity/mobile-security-framework-mobsf:latest
 
           # Run & Forget about it
-          docker run --rm -p 8000:8000 opensecurity/mobile-security-framework-mobsf:latest
+          docker run --rm -p 8000:8000 opensecurity/mobile-security-framework-mobsf:latest & true
 
           # Get the api key
-          node api/getApiKey.js
+          node api/getApiKey.js ./samples/diva-beta.apk
 
-          data=$(cat ./api/token)
+          data=$(cat ./token)
           echo "Found key: $data"
 
           # Finally run the api to scan
-          node api/scan.js
+          node api/scan.mjs
 
   clamav:
     name: Run ClamAV (Linux mainly)
