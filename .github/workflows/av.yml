@@ -14,17 +14,48 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v5
 
-      - name: Setup mobsfscan
-        run: pip install mobsfscan
+      - name: Start MobSF Container
+        run: |
+          docker pull opensecurity/mobile-security-framework-mobsf:latest
+          docker run -it --rm -p 8000:8000 opensecurity/mobile-security-framework-mobsf:latest
 
-      - name: Scan apk
-        run: mobsfscan ./samples/app.apk
+      - name: Scan APK with MobSF
+        run: |
+          # Wait for MobSF to be ready (optional, but good practice)
+          sleep 10
 
-      - name: Scan apk
-        run: mobsfscan ./samples/android.apk
+          # Upload the APK and get the hash
+          response=$(curl -s -X POST -F "file=@./samples/diva-beta.apk" -H "Authorization: mobsf http://localhost:8000/api/v1/upload)
 
-      - name: Scan apk
-        run: mobsfscan ./samples/diva-beta.apk
+          file_hash=$(echo "$response" | jq -r .hash)
+
+          if [ "$file_hash" == "null" ]; then
+            echo "Error uploading file. Response: $response"
+            exit 1
+          fi
+
+          echo "File uploaded with hash: $file_hash"
+
+          # Start the analysis
+          scan_response=$(curl -s -X POST -F "scan_type=apk" -F "hash=$file_hash" -H "Authorization: mobsf http://localhost:8000/api/v1/scan)
+
+          echo "Scan triggered. Response: $scan_response"
+
+          # Wait for the scan to finish
+          # In a real pipeline, you would poll the status until it's done. For this example, we'll wait a bit.
+          sleep 60
+
+          # Retrieve the report
+          report=$(curl -s -X POST -F "hash=$file_hash" -H "Authorization: mobsf http://localhost:8000/api/v1/report_json)
+
+          # Check if the report is valid and has security issues
+          if echo "$report" | jq -e '.vulnerabilities | length > 0'; then
+            echo "Vulnerabilities found! MobSF is working correctly."
+            # Add logic to fail the build if critical issues are found
+          else
+            echo "No vulnerabilities found (or report is empty)."
+            # Add logic for what to do when no issues are found
+          fi
 
   clamav:
     name: Run ClamAV (Linux mainly)
