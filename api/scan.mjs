@@ -1,4 +1,4 @@
-import { createReadStream, readFileSync, existsSync } from "node:fs";
+import { readFileSync, existsSync } from "node:fs";
 import FormData from "form-data";
 import axios from "axios";
 
@@ -28,14 +28,15 @@ async function uploadFile() {
     });
 
     // Get the headers from the form-data object, which includes the Content-Type
-    const formHeaders = form.getHeaders({
-      Authorization: authorizationToken,
-    });
+    const formHeaders = form.getHeaders();
 
     console.log(formHeaders);
 
     // Make the fetch request
-    const response = await axios.post(url, form.getBuffer(), formHeaders);
+    const response = await axios.post(url, form.getBuffer(), {
+      ...formHeaders,
+      "Authorization": authorizationToken,
+    });
 
     // Handle the response
     if (response.status == 200) {
