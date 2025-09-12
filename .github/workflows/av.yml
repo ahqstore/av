@@ -17,7 +17,7 @@ jobs:
       - name: Install ClamAV & Scan
         id: scan
         run: |
-          sudo apt install clamav clamav-daemon
+          sudo apt install clamav clamav-daemon clamav-freshclam
 
           sudo clamd
           sudo freshclam
