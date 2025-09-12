@@ -20,6 +20,9 @@ jobs:
       - name: Scan apk
         run: mobsfscan ./samples/app.apk -c .mobsf
 
+      - name: Scan apk
+        run: mobsfscan ./samples/android.apk -c .mobsf
+
   clamav:
     name: Run ClamAV (Linux mainly)
 
