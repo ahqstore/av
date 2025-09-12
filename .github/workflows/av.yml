@@ -14,24 +14,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v5
 
-      - name: Run MobSF Analysis
-        uses: fundacaocerti/mobsf-action@v1.7.2
-        env:
-          INPUT_FILE_NAME: ./samples/diva-beta.apk
-          SCAN_TYPE: apk
-          OUTPUT_FILE_NAME: mobsf-report
+      - name: Install Deps
+        run: |
+          sudo apt-get install git golang-go jadx dex2jar
 
-      - name: Upload MobSF Analysis PDF Result
-        uses: actions/upload-artifact@v4
-        with:
-          name: mobsf-report.pdf
-          path: mobsf-report.pdf
-
-      - name: Upload MobSF Analysis JSON Result
-        uses: actions/upload-artifact@v4
-        with:
-          name: mobsf-report.json
-          path: mobsf-report.json
+          git clone https://github.com/Cyber-Buddy/APKHunt.git
+          cd APKHunt
+          go run apkhunt.go -m ../samples
 
   clamav:
     name: Run ClamAV (Linux mainly)
