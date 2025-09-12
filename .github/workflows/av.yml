@@ -1,7 +1,6 @@
 name: Publish
 
 on:
-  push:
   issue_comment:
 
 jobs:
@@ -24,7 +23,7 @@ jobs:
             -v ${{ github.workspace }}:/data \
             -v clamav-db-volume:/var/lib/clamav \
             clamav/clamav:latest \
-            /bin/sh -c "freshclam && clamdscan /data/samples/"
+            /bin/sh -c "clamd & freshclam && while ! clamdscan --ping > /dev/null 2>&1; do echo 'Waiting for clamd...'; sleep 2; done && clamdscan /data/samples/"
         continue-on-error: true
 
       - name: Check scan results
