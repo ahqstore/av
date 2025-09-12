@@ -1,0 +1,37 @@
+name: Publish
+
+on:
+  push:
+  issue_comment:
+
+jobs:
+  clamav:
+    name: Run ClamAV (Linux mainly)
+
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Create shared ClamAV volume
+        run: docker volume create clamav-db-volume
+
+      - name: Update ClamAV database
+        run: |
+          docker run --rm -v clamav-db-volume:/var/lib/clamav clamav/clamav:latest freshclam
+
+      - name: Scan files with ClamAV
+        id: scan
+        run: |
+          docker run --rm \
+            -v clamav-db-volume:/var/lib/clamav \
+            -v ${{ github.workspace }}:/github/workspace \
+            clamav/clamav:latest clamdscan /github/workspace/samples/
+        continue-on-error: true
+
+      - name: Check scan results
+        if: steps.scan.outputs.exitcode != '0'
+        run: |
+          echo "Virus/malware detected! Please check the logs."
+          exit 1
