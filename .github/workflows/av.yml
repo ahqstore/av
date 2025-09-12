@@ -14,48 +14,24 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v5
 
-      - name: Start MobSF Container
-        run: |
-          docker pull opensecurity/mobile-security-framework-mobsf:latest
-          docker run -it --rm -p 8000:8000 opensecurity/mobile-security-framework-mobsf:latest
+      - name: Run MobSF Analysis
+        uses: fundacaocerti/mobsf-action@v1.7.2
+        env:
+          INPUT_FILE_NAME: ./samples/diva-beta.apk
+          SCAN_TYPE: apk
+          OUTPUT_FILE_NAME: mobsf-report
 
-      - name: Scan APK with MobSF
-        run: |
-          # Wait for MobSF to be ready (optional, but good practice)
-          sleep 10
+      - name: Upload MobSF Analysis PDF Result
+        uses: actions/upload-artifact@v4
+        with:
+          name: mobsf-report.pdf
+          path: mobsf-report.pdf
 
-          # Upload the APK and get the hash
-          response=$(curl -s -X POST -F "file=@./samples/diva-beta.apk" -H "Authorization: mobsf http://localhost:8000/api/v1/upload)
-
-          file_hash=$(echo "$response" | jq -r .hash)
-
-          if [ "$file_hash" == "null" ]; then
-            echo "Error uploading file. Response: $response"
-            exit 1
-          fi
-
-          echo "File uploaded with hash: $file_hash"
-
-          # Start the analysis
-          scan_response=$(curl -s -X POST -F "scan_type=apk" -F "hash=$file_hash" -H "Authorization: mobsf http://localhost:8000/api/v1/scan)
-
-          echo "Scan triggered. Response: $scan_response"
-
-          # Wait for the scan to finish
-          # In a real pipeline, you would poll the status until it's done. For this example, we'll wait a bit.
-          sleep 60
-
-          # Retrieve the report
-          report=$(curl -s -X POST -F "hash=$file_hash" -H "Authorization: mobsf http://localhost:8000/api/v1/report_json)
-
-          # Check if the report is valid and has security issues
-          if echo "$report" | jq -e '.vulnerabilities | length > 0'; then
-            echo "Vulnerabilities found! MobSF is working correctly."
-            # Add logic to fail the build if critical issues are found
-          else
-            echo "No vulnerabilities found (or report is empty)."
-            # Add logic for what to do when no issues are found
-          fi
+      - name: Upload MobSF Analysis JSON Result
+        uses: actions/upload-artifact@v4
+        with:
+          name: mobsf-report.json
+          path: mobsf-report.json
 
   clamav:
     name: Run ClamAV (Linux mainly)
