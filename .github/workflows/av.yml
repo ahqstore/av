@@ -14,17 +14,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v5
 
-      - name: Create shared ClamAV volume
-        run: docker volume create clamav-db-volume
-
-      - name: Run ClamAV in a single container and scan
+      - name: Install ClamAV & Scan
         id: scan
         run: |
-          docker run --rm \
-            -v ${{ github.workspace }}:/data \
-            -v clamav-db-volume:/var/lib/clamav \
-            clamav/clamav:latest \
-            /bin/sh -c "clamd & freshclam && while ! clamdscan --ping > /dev/null 2>&1; do echo 'Waiting for clamd...'; sleep 2; done && clamdscan /data/samples/"
+          sudo apt install clamav clamav-daemon
+
+          clamd & freshclam
+          clamdscan /data/samples/
         continue-on-error: true
 
       - name: Check scan results
