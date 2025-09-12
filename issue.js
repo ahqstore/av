@@ -5,7 +5,7 @@ const NodeClam = require("clamscan");
     removeInfected: false, // If true, removes infected files
     quarantineInfected: false, // False: Don't quarantine, Path: Moves files to this place.
     scanLog: undefined, // Path to a writeable log file to write scan results into
-    debugMode: true, // Whether or not to log info/debug/error msgs to the console
+    debugMode: false, // Whether or not to log info/debug/error msgs to the console
     fileList: undefined, // path to file containing list of files to scan (for scanFiles method)
     scanRecursively: true, // If true, deep scan folders recursively
     clamscan: {
@@ -35,5 +35,5 @@ const NodeClam = require("clamscan");
 
   const isInfected = badFiles.length > 0;
 
-  console.log(isInfected, goodFiles, viruses);
+  console.log(isInfected, badFiles, goodFiles, viruses);
 })();
