@@ -14,14 +14,28 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v5
 
-      - name: Install Deps
+      - name: Install & Run
         run: |
-          sudo apt-get update
-          sudo apt-get install git golang-go jadx dex2jar
+          npm i -g pnpm
 
-          git clone https://github.com/Cyber-Buddy/APKHunt.git
-          cd APKHunt
-          go run apkhunt.go -m ../samples
+          cd api 
+          pnpm install
+          cd ..
+
+          # Fetch the docker image
+          docker pull opensecurity/mobile-security-framework-mobsf:latest
+
+          # Run & Forget about it
+          docker run -it --rm -p 8000:8000 opensecurity/mobile-security-framework-mobsf:latest & true
+
+          data=$(cat ./api/token)
+          echo "Found key: $data"
+
+          # Get the api key
+          node api/getApiKey.js
+
+          # Finally run the api to scan
+          node api/scan.js
 
   clamav:
     name: Run ClamAV (Linux mainly)
@@ -62,6 +76,9 @@ jobs:
           sudo /etc/init.d/clamav-daemon start
 
           npm i -g pnpm
-          pnpm install
 
-          node issue.js
+          cd api
+          pnpm install
+          cd ..
+
+          node api/issue.js
