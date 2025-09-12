@@ -18,10 +18,13 @@ jobs:
         run: pip install mobsfscan
 
       - name: Scan apk
-        run: mobsfscan ./samples/app.apk -c .mobsf
+        run: mobsfscan ./samples/app.apk
 
       - name: Scan apk
-        run: mobsfscan ./samples/android.apk -c .mobsf
+        run: mobsfscan ./samples/android.apk
+
+      - name: Scan apk
+        run: mobsfscan ./samples/diva-beta.apk
 
   clamav:
     name: Run ClamAV (Linux mainly)
