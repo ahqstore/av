@@ -31,9 +31,9 @@ const NodeClam = require("clamscan");
     preference: "clamscan", // If clamdscan is found and active, it will be used by default
   });
 
-  const { badFiles, goodFiles, viruses } = await av.scanDir("./infected");
+  const { badFiles, goodFiles, viruses } = await av.scanDir("./samples");
 
   const isInfected = badFiles.length > 0;
 
-  console.log(isInfected);
+  console.log(isInfected, goodFiles, viruses);
 })();
