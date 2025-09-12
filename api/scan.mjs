@@ -2,7 +2,7 @@ import { createReadStream, readFileSync } from "node:fs";
 import FormData from "form-data";
 
 // Define the file path and API details
-const filePath = process.argv[2];
+const filePath = "./samples/diva-beta.apk";
 
 const url = "http://localhost:8000/api/v1/upload";
 
