@@ -1,0 +1,23 @@
+lockfileVersion: '9.0'
+
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
+importers:
+
+  .:
+    dependencies:
+      clamscan:
+        specifier: ^2.4.0
+        version: 2.4.0
+
+packages:
+
+  clamscan@2.4.0:
+    resolution: {integrity: sha512-XBOxUiGOcQGuKmCn5qaM5rIK153fGCwsvJMbjVtcnNJ+j/YHrSj2gKNjyP65yr/E8JsKTTDtKYFG++p7Lzigyw==}
+    engines: {node: '>=16.0.0'}
+
+snapshots:
+
+  clamscan@2.4.0: {}
