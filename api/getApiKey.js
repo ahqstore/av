@@ -29,6 +29,7 @@ const delay = (ms) => new Promise((r) => setTimeout(() => r(), ms));
 
   const browser = await launch({
     headless: process.env["GUI"] != "true",
+    args: ["--no-sandbox", "--disable-setuid-sandbox"],
   });
 
   const tab = await browser.newPage();
