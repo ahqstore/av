@@ -1,6 +1,7 @@
 name: Publish
 
 on:
+  push:
   issue_comment:
 
 jobs:
