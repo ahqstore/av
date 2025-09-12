@@ -23,7 +23,7 @@ async function uploadFile() {
 
     // Append the file stream to the form data.
     // The key 'file' must match the API's expected field name exactly.
-    form.append("file", createReadStream(filePath), {
+    form.append("file", readFileSync(filePath), {
       filename: "sample.apk",
     });
 
