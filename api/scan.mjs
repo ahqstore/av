@@ -1,5 +1,6 @@
 import { createReadStream, readFileSync, existsSync } from "node:fs";
 import FormData from "form-data";
+import axios from "axios";
 
 // Define the file path and API details
 const filePath = "./samples/diva-beta.apk";
@@ -27,23 +28,18 @@ async function uploadFile() {
     });
 
     // Get the headers from the form-data object, which includes the Content-Type
-    const formHeaders = form.getHeaders();
+    const formHeaders = form.getHeaders({
+      Authorization: authorizationToken,
+    });
 
     console.log(formHeaders);
 
     // Make the fetch request
-    const response = await fetch(url, {
-      method: "POST",
-      body: form.getBuffer(),
-      headers: {
-        ...formHeaders,
-        Authorization: authorizationToken,
-      },
-    });
+    const response = await axios.post(url, form.getBuffer(), formHeaders);
 
     // Handle the response
-    if (response.ok) {
-      const data = await response.json();
+    if (response.status == 200) {
+      const data = response.data;
       console.log("Upload successful! 🎉");
       console.log(data);
     } else {
