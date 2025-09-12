@@ -19,7 +19,6 @@ jobs:
         run: |
           sudo apt install clamav clamav-daemon clamav-freshclam
 
-          sudo clamd
           sudo freshclam
           sudo clamdscan /data/samples/
         continue-on-error: true
