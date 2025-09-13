@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     outputs:
-      shouldRun: ${{ fromJson(steps.run.outputs.result) }}
+      shouldRunAsString: ${{ steps.run.outputs.result }}
 
     steps:
       - name: Checkout
@@ -20,10 +20,11 @@ jobs:
         uses: actions/github-script@v8
         id: run
         with:
+          result-encoding: string
           script: |
             const body = context.payload.comment.body;
 
-            return body.startsWith("/store set ")
+            return body.startsWith("/store set ") ? "true" : "false"
 
   mobsf:
     needs: [startup]
@@ -32,7 +33,7 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    if: needs.startup.outputs.shouldRun
+    if: needs.startup.outputs.shouldRunAsString == 'true'
 
     steps:
       - name: Checkout
@@ -83,7 +84,7 @@ jobs:
 
     runs-on: windows-latest
 
-    if: needs.startup.outputs.shouldRun
+    if: needs.startup.outputs.shouldRunAsString == 'true'
 
     steps:
       - name: Checkout
@@ -114,7 +115,7 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    if: needs.startup.outputs.shouldRun
+    if: needs.startup.outputs.shouldRunAsString == 'true'
 
     steps:
       - name: Checkout
@@ -169,6 +170,8 @@ jobs:
     name: Run the Issues Bot
     needs: [startup, clamav, mobsf, win32]
     runs-on: ubuntu-latest
+
+    if: always()
 
     steps:
       - name: Checkout
