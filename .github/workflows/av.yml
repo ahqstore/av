@@ -6,7 +6,7 @@ on:
 
 jobs:
   mobsf:
-    name: Run MobSF (Android)
+    name: Scan using MobSF (Android)
 
     runs-on: ubuntu-latest
 
@@ -63,10 +63,10 @@ jobs:
         include:
           - os: windows-latest
             arch: x64
-          - os: windows-latest-arm
+          - os: windows-11-arm
             arch: arm64
 
-    runs-on: windows-latest
+    runs-on: ${{ matrix.os }}
 
     steps:
       - name: Checkout
@@ -95,7 +95,7 @@ jobs:
           name: win32report-${{ matrix.arch }}.json
 
   clamav:
-    name: Run ClamAV (Linux mainly)
+    name: Scan using ClamAV (Linux mainly)
 
     runs-on: ubuntu-latest
 
