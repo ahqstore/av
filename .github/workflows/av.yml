@@ -21,9 +21,7 @@ jobs:
         id: run
         with:
           script: |
-            const body = context.payload.issue.body;
-
-            console.log(context.payload.issue);
+            const body = context.payload.comment.body;
 
             return body.startsWith("/store set ")
 
