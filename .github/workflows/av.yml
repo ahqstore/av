@@ -42,6 +42,16 @@ jobs:
           # Scan
           node api/scan.mjs
 
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with:
+          path: ./android-alldata.json
+
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with:
+          path: ./android-appsec.json
+
   clamav:
     name: Run ClamAV (Linux mainly)
 
@@ -87,3 +97,8 @@ jobs:
           cd ..
 
           node api/issue.js
+
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with:
+          path: ./clamav.json

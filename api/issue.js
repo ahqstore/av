@@ -1,4 +1,5 @@
 const NodeClam = require("clamscan");
+const fs = require("fs");
 
 (async () => {
   const av = await new NodeClam().init({
@@ -36,4 +37,18 @@ const NodeClam = require("clamscan");
   const isInfected = badFiles.length > 0;
 
   console.log(isInfected, badFiles, goodFiles, viruses);
+
+  fs.writeFileSync(
+    "./clamav.json",
+    JSON.stringify(
+      {
+        isInfected,
+        badFiles,
+        goodFiles,
+        viruses,
+      },
+      null,
+      2
+    )
+  );
 })();
