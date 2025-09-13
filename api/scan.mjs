@@ -4,6 +4,7 @@ import { readFileSync, writeFileSync } from "node:fs";
 const fileHash = readFileSync("./hash").toString().trim();
 const url = "http://localhost:8000/api/v1/scan";
 const urlScorecard = "http://localhost:8000/api/v1/scorecard";
+const urlReport = "http://localhost:8000/api/v1/report_json";
 
 const authorizationToken = readFileSync("./token").toString().trim();
 
@@ -35,9 +36,18 @@ async function scanFile() {
         },
       }).then((r) => r.json());
 
+      const report = await fetch(urlReport, {
+        method: "POST",
+        body: `hash=${fileHash}`,
+        headers: {
+          "Authorization": authorizationToken,
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+      }).then((r) => r.json());
+
       writeFileSync(
         "./android-alldata.json",
-        JSON.stringify({ data, scorecard }, null, 2)
+        JSON.stringify({ data, scorecard, report }, null, 2)
       );
       writeFileSync(
         "./android-appsec.json",
