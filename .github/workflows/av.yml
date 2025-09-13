@@ -139,3 +139,21 @@ jobs:
         with:
           path: ./clamav.json
           name: clamav.json
+
+  summarize:
+    needs: [clamav, mobsf, win32]
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v5
+        with:
+          path: reports
+          merge-multiple: false
+
+      - name: List
+        run: ls -R reports/
