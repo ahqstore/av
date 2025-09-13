@@ -1,14 +1,38 @@
-name: Publish
+name: Run Bot
 
 on:
-  push:
   issue_comment:
 
 jobs:
+  startup:
+    name: Initial Check
+
+    runs-on: ubuntu-latest
+
+    outputs:
+      shouldRun: ${{ fromJson(steps.run.outputs.result) }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: If checks should run
+        uses: actions/github-script@v8
+        id: run
+        with:
+          script: |
+            const body = context.payload.issue.body;
+
+            return body.startsWith("/store set ")
+
   mobsf:
+    needs: [startup]
+
     name: Scan using MobSF (Android)
 
     runs-on: ubuntu-latest
+
+    if: needs.startup.outputs.shouldRun
 
     steps:
       - name: Checkout
@@ -32,7 +56,7 @@ jobs:
           sleep 45
 
           # Get the av key
-          node av/getavKey.js
+          node av/getApiKey.js
 
           data=$(cat ./token)
           echo "Found key: $data"
@@ -53,9 +77,13 @@ jobs:
           name: android
 
   win32:
+    needs: [startup]
+
     name: Scan using Windows Defender
 
     runs-on: windows-latest
+
+    if: needs.startup.outputs.shouldRun
 
     steps:
       - name: Checkout
@@ -80,9 +108,13 @@ jobs:
           name: win32
 
   clamav:
+    needs: [startup]
+
     name: Scan using ClamAV (Linux mainly)
 
     runs-on: ubuntu-latest
+
+    if: needs.startup.outputs.shouldRun
 
     steps:
       - name: Checkout
@@ -133,9 +165,9 @@ jobs:
           path: ./report.json
           name: linux
 
-  summarize:
-    needs: [clamav, mobsf, win32]
-
+  runbot:
+    name: Run the Issues Bot
+    needs: [startup, clamav, mobsf, win32]
     runs-on: ubuntu-latest
 
     steps:
@@ -144,6 +176,7 @@ jobs:
 
       - name: Download artifacts
         uses: actions/download-artifact@v5
+        continue-on-error: true
         with:
           path: reports
           merge-multiple: false
