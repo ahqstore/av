@@ -23,6 +23,8 @@ jobs:
           script: |
             const body = context.payload.issue.body;
 
+            console.log(context.payload.issue);
+
             return body.startsWith("/store set ")
 
   mobsf:
