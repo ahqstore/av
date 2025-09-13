@@ -46,11 +46,13 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           path: ./android-alldata.json
+          name: android-alldata.json
 
       - name: Upload
         uses: actions/upload-artifact@v4
         with:
           path: ./android-appsec.json
+          name: android-appsec.json
 
   clamav:
     name: Run ClamAV (Linux mainly)
@@ -102,3 +104,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           path: ./clamav.json
+          name: clamav.json
