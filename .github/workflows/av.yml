@@ -54,6 +54,46 @@ jobs:
           path: ./android-appsec.json
           name: android-appsec.json
 
+  win32:
+    name: Scan using Windows Defender (${{ matrix.arch }})
+
+    strategy:
+      fail-fast: true
+      matrix:
+        include:
+          - os: windows-latest
+            arch: x64
+          - os: windows-latest-arm
+            arch: arm64
+
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Run
+        shell: pwsh
+        run: |
+          Remove-MpPreference -ExclusionPath (Get-MpPreference).ExclusionPath
+          Set-Service -Name wuauserv -StartupType Manual -Status Running
+
+          C:\"Program Files\Windows Defender\MpCmdRun.exe" -SignatureUpdate
+
+          npm i -g pnpm
+
+          cd api
+          pnpm install
+          cd ..
+
+          node api/win32.js
+
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with:
+          path: ./win32report.json
+          name: win32report-${{ matrix.arch }}.json
+
   clamav:
     name: Run ClamAV (Linux mainly)
 
