@@ -36,8 +36,11 @@ jobs:
           data=$(cat ./token)
           echo "Found key: $data"
 
-          # Finally run the api to scan
+          # Finally run the api to upload
           node api/upload.mjs
+
+          # Scan
+          node api/scan.mjs
 
   clamav:
     name: Run ClamAV (Linux mainly)

@@ -1,6 +1,5 @@
-import { readFileSync, existsSync } from "node:fs";
+import { readFileSync, existsSync, writeFileSync } from "node:fs";
 import FormData from "form-data";
-import axios from "axios";
 
 // Define the file path and API details
 const filePath = "./samples/diva-beta.apk";
@@ -47,6 +46,8 @@ async function uploadFile() {
       const data = await response.json();
       console.log("Upload successful! 🎉");
       console.log(data);
+
+      writeFileSync("./hash", data.hash);
     } else {
       console.error(`Upload failed with status: ${response.status}`);
       const errorText = await response.text();
