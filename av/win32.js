@@ -71,5 +71,5 @@ async function scanWindowsDefender() {
 
 scanWindowsDefender().then((report) => {
   console.log(report);
-  writeFileSync("./win32report.json", JSON.stringify(report, null, 4));
+  writeFileSync("./report.json", JSON.stringify(report, null, 4));
 });

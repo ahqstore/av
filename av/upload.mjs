@@ -1,8 +1,8 @@
-import { readFileSync, existsSync, writeFileSync } from "node:fs";
+import { readFileSync, existsSync, writeFileSync, readdirSync } from "node:fs";
 import FormData from "form-data";
 
 // Define the file path and API details
-const filePath = "./samples/app.apk";
+const filePath = readdirSync("./samples").find((file) => file.endsWith(".apk"));
 const url = "http://localhost:8000/api/v1/upload";
 
 const authorizationToken = readFileSync("./token").toString().trim();
@@ -10,6 +10,10 @@ const authorizationToken = readFileSync("./token").toString().trim();
 console.log(`Using token: \`${authorizationToken}\``);
 
 async function uploadFile() {
+  if (!filePath) {
+    return;
+  }
+
   try {
     // Check if the file exists before trying to create a read stream
     if (!existsSync(filePath)) {

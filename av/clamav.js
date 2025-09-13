@@ -39,7 +39,7 @@ const fs = require("fs");
   console.log(isInfected, badFiles, goodFiles, viruses);
 
   fs.writeFileSync(
-    "./clamav.json",
+    "./report.json",
     JSON.stringify(
       {
         isInfected,

@@ -15,10 +15,11 @@ jobs:
         uses: actions/checkout@v5
 
       - name: Install & Run
+        continue-on-error: true
         run: |
           npm i -g pnpm
 
-          cd api 
+          cd av 
           pnpm install
           cd ..
 
@@ -30,43 +31,31 @@ jobs:
 
           sleep 45
 
-          # Get the api key
-          node api/getApiKey.js
+          # Get the av key
+          node av/getavKey.js
 
           data=$(cat ./token)
           echo "Found key: $data"
 
-          # Finally run the api to upload
-          node api/upload.mjs
+          # Finally run the av to upload
+          node av/upload.mjs
 
           # Scan
-          node api/scan.mjs
+          node av/scan.mjs
 
       - name: Upload
         uses: actions/upload-artifact@v4
+        continue-on-error: true
         with:
-          path: ./android-alldata.json
-          name: android-alldata.json
-
-      - name: Upload
-        uses: actions/upload-artifact@v4
-        with:
-          path: ./android-appsec.json
-          name: android-appsec.json
+          path: |
+            ./android-alldata.json
+            ./android-appsec.json
+          name: android
 
   win32:
-    name: Scan using Windows Defender (${{ matrix.arch }})
+    name: Scan using Windows Defender
 
-    strategy:
-      fail-fast: true
-      matrix:
-        include:
-          - os: windows-latest
-            arch: x64
-          - os: windows-11-arm
-            arch: arm64
-
-    runs-on: ${{ matrix.os }}
+    runs-on: windows-latest
 
     steps:
       - name: Checkout
@@ -74,19 +63,21 @@ jobs:
 
       - name: Run
         shell: pwsh
+        continue-on-error: true
         run: |
           Remove-MpPreference -ExclusionPath (Get-MpPreference).ExclusionPath
           Set-Service -Name wuauserv -StartupType Manual -Status Running
 
           C:\"Program Files\Windows Defender\MpCmdRun.exe" -SignatureUpdate
 
-          node api/win32.js
+          node av/win32.js
 
       - name: Upload
         uses: actions/upload-artifact@v4
+        continue-on-error: true
         with:
-          path: ./win32report.json
-          name: win32report-${{ matrix.arch }}.json
+          path: ./report.json
+          name: win32
 
   clamav:
     name: Scan using ClamAV (Linux mainly)
@@ -119,6 +110,7 @@ jobs:
             fs.writeFileSync("./event.json", JSON.stringify(context.payload));
 
       - name: Installing Dependencies and run bot
+        continue-on-error: true
         run: |
           sudo systemctl stop clamav-freshclam.service
           sudo freshclam || true
@@ -128,17 +120,18 @@ jobs:
 
           npm i -g pnpm
 
-          cd api
+          cd av
           pnpm install
           cd ..
 
-          node api/issue.js
+          node av/clamav.js
 
       - name: Upload
         uses: actions/upload-artifact@v4
+        continue-on-error: true
         with:
-          path: ./clamav.json
-          name: clamav.json
+          path: ./report.json
+          name: linux
 
   summarize:
     needs: [clamav, mobsf, win32]
