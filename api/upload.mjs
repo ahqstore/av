@@ -44,7 +44,7 @@ async function uploadFile() {
 
     // Handle the response
     if (response.ok) {
-      const data = response.data;
+      const data = await response.json();
       console.log("Upload successful! 🎉");
       console.log(data);
     } else {

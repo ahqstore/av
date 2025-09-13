@@ -37,7 +37,7 @@ jobs:
           echo "Found key: $data"
 
           # Finally run the api to scan
-          node api/scan.mjs
+          node api/upload.mjs
 
   clamav:
     name: Run ClamAV (Linux mainly)
