@@ -28,7 +28,7 @@ jobs:
           # Run & Forget about it
           docker run --rm -p 8000:8000 opensecurity/mobile-security-framework-mobsf:latest & true
 
-          sleep 20
+          sleep 45
 
           # Get the api key
           node api/getApiKey.js
