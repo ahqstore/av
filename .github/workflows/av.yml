@@ -80,10 +80,8 @@ jobs:
 
           C:\"Program Files\Windows Defender\MpCmdRun.exe" -SignatureUpdate
 
-          npm i -g pnpm
-
           cd api
-          pnpm install
+          npm install
           cd ..
 
           node api/win32.js
