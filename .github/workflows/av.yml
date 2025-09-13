@@ -80,10 +80,6 @@ jobs:
 
           C:\"Program Files\Windows Defender\MpCmdRun.exe" -SignatureUpdate
 
-          cd api
-          npm install
-          cd ..
-
           node api/win32.js
 
       - name: Upload

@@ -49,6 +49,8 @@ async function scanWindowsDefender() {
   for (const index in files) {
     const file = files[index];
 
+    console.log(`Scanning ${file}`);
+
     const out = await scanWindows(resolve(__dirname, "..", "samples", file));
 
     const output = out.out;
