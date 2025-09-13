@@ -33,13 +33,17 @@ async function uploadFile() {
     console.log(formHeaders);
 
     // Make the fetch request
-    const response = await axios.post(url, form.getBuffer(), {
-      ...formHeaders,
-      "Authorization": authorizationToken,
+    const response = await fetch(url, {
+      method: "POST",
+      body: form.getBuffer(),
+      headers: {
+        ...formHeaders,
+        Authorization: authorizationToken,
+      },
     });
 
     // Handle the response
-    if (response.status == 200) {
+    if (response.ok) {
       const data = response.data;
       console.log("Upload successful! 🎉");
       console.log(data);
@@ -47,6 +51,7 @@ async function uploadFile() {
       console.error(`Upload failed with status: ${response.status}`);
       const errorText = await response.text();
       console.error("Error:", errorText);
+      process.exit(1);
     }
   } catch (error) {
     console.error("An error occurred during the file upload:", error);
